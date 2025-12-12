@@ -1,1 +1,1383 @@
+<!doctype html>
+<html lang="id" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rekap Rapor SMP 59 Bekasi</title>
+  <script src="/_sdk/data_sdk.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+    
+    .gold-gradient {
+      background: linear-gradient(135deg, #d4af37 0%, #f4e4a6 100%);
+    }
+    
+    .blue-gradient {
+      background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+      transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(30, 58, 138, 0.4);
+    }
+    
+    .btn-secondary {
+      background: linear-gradient(135deg, #d4af37 0%, #f4e4a6 100%);
+      color: #1e3a8a;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-secondary:hover {
+      background: linear-gradient(135deg, #c29d2f 0%, #e8d590 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4);
+    }
+    
+    .card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+    
+    .card:hover {
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+    
+    .table-header {
+      background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+      color: white;
+    }
+    
+    .table-row:nth-child(even) {
+      background-color: #f8fafc;
+    }
+    
+    .table-row:hover {
+      background-color: #eff6ff;
+    }
+    
+    .badge-semester {
+      background: linear-gradient(135deg, #d4af37 0%, #f4e4a6 100%);
+      color: #1e3a8a;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+    
+    .input-field {
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 10px 14px;
+      transition: all 0.3s ease;
+    }
+    
+    .input-field:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    
+    .spinner {
+      border: 3px solid #f3f4f6;
+      border-top: 3px solid #3b82f6;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 16px 24px;
+      border-radius: 8px;
+      color: white;
+      font-weight: 500;
+      z-index: 1000;
+      animation: slideIn 0.3s ease;
+    }
+    
+    @keyframes slideIn {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    
+    .toast-success {
+      background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+    }
+    
+    .toast-error {
+      background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+    }
+    
+    .menu-tab {
+      background: #e5e7eb;
+      color: #6b7280;
+    }
+    
+    .menu-tab:hover {
+      background: #d1d5db;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .menu-tab.active {
+      background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+      color: white;
+      box-shadow: 0 4px 12px rgba(30, 58, 138, 0.4);
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+ </head>
+ <body class="h-full">
+  <div id="app" class="h-full w-full overflow-auto" style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);"><!-- Login Section -->
+   <div id="login-section" class="h-full w-full flex items-center justify-center">
+    <div class="card p-8 w-full max-w-md mx-4">
+     <div class="text-center mb-8">
+      <div class="text-6xl mb-4">
+       🔐
+      </div>
+      <h2 class="text-3xl font-bold text-blue-900 mb-2">Login Sistem Rapor</h2>
+      <p class="text-gray-600">SMP 59 KOTA BEKASI</p>
+     </div>
+     <form id="login-form">
+      <div class="mb-6"><label for="username" class="block text-blue-900 font-semibold mb-2">Username</label> <input type="text" id="username" class="input-field w-full" placeholder="Masukkan username" required>
+      </div>
+      <div class="mb-6"><label for="password" class="block text-blue-900 font-semibold mb-2">Password</label> <input type="password" id="password" class="input-field w-full" placeholder="Masukkan password" required>
+      </div><button type="submit" class="btn-primary text-white font-semibold px-8 py-3 rounded-lg shadow-lg w-full mb-4"> 🔓 Login </button>
+     </form>
+     <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mt-6">
+      <p class="text-blue-900 font-semibold mb-2">📋 Info Login:</p>
+      <p class="text-blue-800 text-sm"><strong>Siswa:</strong> Login menggunakan <strong>NIS</strong> sebagai username dan password</p>
+     </div>
+    </div>
+   </div><!-- Main App (Hidden until login) -->
+   <div id="main-app" class="hidden"><!-- Header -->
+    <header class="gold-gradient shadow-lg">
+     <div class="max-w-7xl mx-auto px-6 py-8">
+      <div class="flex justify-between items-center">
+       <div class="text-center flex-1">
+        <h1 id="school-name" class="text-4xl font-bold text-blue-900 mb-2">SMP 59 KOTA BEKASI</h1>
+        <p id="school-address" class="text-blue-800 text-lg mb-1">Jl. Pangkalan 2 RT. 003 RW. 008 Bantargebang Kec. Bantargebang Kota Bekasi</p>
+        <p id="academic-year" class="text-blue-800 font-semibold">Tahun Ajaran 2025/2026</p>
+       </div>
+       <div class="flex flex-col items-end gap-2">
+        <div class="text-blue-900 font-semibold">
+         👤 <span id="logged-user-name"></span>
+        </div><button id="btn-logout" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all"> 🚪 Logout </button>
+       </div>
+      </div>
+     </div>
+    </header><!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-6 py-8"><!-- Navigation Menu -->
+     <div class="card p-6 mb-8">
+      <div class="flex gap-4 justify-center"><button id="btn-menu-admin" class="menu-tab active px-8 py-4 rounded-lg font-bold text-lg transition-all"> 👨‍��� Admin View </button> <button id="btn-menu-student" class="menu-tab px-8 py-4 rounded-lg font-bold text-lg transition-all"> 👨‍🎓 Student View </button>
+      </div>
+     </div><!-- Admin Section -->
+     <div id="admin-section"><!-- Title and Add Button -->
+      <div class="flex justify-between items-center mb-8">
+       <h2 id="page-title" class="text-3xl font-bold text-blue-900">📊 Rekap Nilai Rapor - Lima Semester</h2>
+       <div class="flex gap-3"><button id="btn-import-data" class="btn-secondary font-semibold px-6 py-3 rounded-lg shadow-lg"> 📥 Import Data </button> <button id="btn-add-student" class="btn-primary text-white font-semibold px-6 py-3 rounded-lg shadow-lg"> ➕ Tambah Data Siswa </button>
+       </div>
+      </div><!-- Import Section (Hidden by default) -->
+      <div id="import-section" class="card p-8 mb-8 hidden">
+       <h3 class="text-2xl font-bold text-blue-900 mb-4">📥 Import Data Siswa</h3>
+       <p class="text-gray-600 mb-6">Upload file CSV atau Excel dengan format yang sesuai. File harus berisi kolom: Nama Siswa, NIS, dan nilai untuk setiap mata pelajaran di 5 semester.</p>
+       <div class="mb-6">
+        <div class="border-2 border-dashed border-blue-300 rounded-lg p-8 text-center bg-blue-50"><input type="file" id="file-input" accept=".csv,.xlsx,.xls" class="hidden"> <label for="file-input" class="cursor-pointer">
+          <div class="text-5xl mb-3">
+           📄
+          </div><p class="text-blue-900 font-semibold mb-2">Klik untuk pilih file</p><p class="text-gray-600 text-sm">Format: CSV atau Excel (.xlsx, .xls)</p><p class="text-gray-500 text-xs mt-2" id="file-name">Belum ada file dipilih</p></label>
+        </div>
+       </div>
+       <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
+        <p class="text-yellow-800 font-semibold mb-2">📋 Format File:</p>
+        <p class="text-yellow-700 text-sm">Kolom yang diperlukan: Nama Siswa, NIS, lalu untuk setiap mata pelajaran gunakan format: <strong>Semester1_NamaMapel</strong>, <strong>Semester2_NamaMapel</strong>, dst.</p>
+        <p class="text-yellow-700 text-sm mt-2">Contoh: Semester1_PAI, Semester1_PPKn, Semester2_PAI, Semester2_PPKn, dst.</p>
+       </div>
+       <div class="flex gap-4"><button id="btn-process-import" class="btn-primary text-white font-semibold px-8 py-3 rounded-lg shadow-lg flex items-center gap-2" disabled> <span id="import-spinner" class="spinner hidden"></span> <span>📥 Proses Import</span> </button> <button id="btn-cancel-import" class="btn-secondary font-semibold px-8 py-3 rounded-lg shadow-lg"> ❌ Batal </button> <a id="btn-download-template" href="#" download="template_import_rapor.csv" class="btn-secondary font-semibold px-8 py-3 rounded-lg shadow-lg inline-flex items-center"> ⬇️ Download Template CSV </a>
+       </div>
+      </div><!-- Form Section (Hidden by default) -->
+      <div id="form-section" class="card p-8 mb-8 hidden">
+       <h3 class="text-2xl font-bold text-blue-900 mb-6">Form Data Siswa</h3>
+       <form id="student-form">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+         <div><label for="nama-siswa" class="block text-blue-900 font-semibold mb-2">Nama Siswa</label> <input type="text" id="nama-siswa" class="input-field w-full" placeholder="Masukkan nama siswa" required>
+         </div>
+         <div><label for="nis" class="block text-blue-900 font-semibold mb-2">NIS</label> <input type="text" id="nis" class="input-field w-full" placeholder="Masukkan NIS" required>
+         </div>
+        </div><!-- Semester Sections -->
+        <div id="semester-sections"></div>
+        <div class="flex gap-4 mt-6"><button type="submit" class="btn-primary text-white font-semibold px-8 py-3 rounded-lg shadow-lg flex items-center gap-2"> <span id="submit-spinner" class="spinner hidden"></span> <span id="submit-text">💾 Simpan Data</span> </button> <button type="button" id="btn-cancel" class="btn-secondary font-semibold px-8 py-3 rounded-lg shadow-lg"> ❌ Batal </button>
+        </div>
+       </form>
+      </div><!-- Student List -->
+      <div id="student-list" class="space-y-6"></div><!-- Empty State -->
+      <div id="empty-state" class="card p-12 text-center">
+       <div class="text-6xl mb-4">
+        ��������
+       </div>
+       <h3 class="text-2xl font-bold text-blue-900 mb-2">Belum Ada Data Siswa</h3>
+       <p class="text-gray-600 mb-6">Klik tombol "Tambah Data Siswa" untuk memulai input data rapor</p>
+      </div>
+     </div><!-- Student Section -->
+     <div id="student-section" class="hidden"><!-- Student Search -->
+      <div class="card p-6 mb-8">
+       <h2 class="text-2xl font-bold text-blue-900 mb-4">🔍 Cari Data Siswa</h2>
+       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div><label for="search-nama" class="block text-blue-900 font-semibold mb-2">Nama Siswa</label> <input type="text" id="search-nama" class="input-field w-full" placeholder="Masukkan nama siswa">
+        </div>
+        <div><label for="search-nis" class="block text-blue-900 font-semibold mb-2">NIS</label> <input type="text" id="search-nis" class="input-field w-full" placeholder="Masukkan NIS">
+        </div>
+        <div class="flex items-end"><button id="btn-search-student" class="btn-primary text-white font-semibold px-8 py-3 rounded-lg shadow-lg w-full"> 🔍 Cari </button>
+        </div>
+       </div>
+      </div><!-- Student Result -->
+      <div id="student-result" class="hidden"></div><!-- Student Empty State -->
+      <div id="student-empty-state" class="card p-12 text-center">
+       <div class="text-6xl mb-4">
+        🔍
+       </div>
+       <h3 class="text-2xl font-bold text-blue-900 mb-2">Cari Data Rapor</h3>
+       <p class="text-gray-600 mb-6">Masukkan nama atau NIS siswa untuk melihat data rapor</p>
+      </div>
+     </div>
+    </main>
+   </div>
+  </div>
+  <script>
+    const defaultConfig = {
+      background_color: "#f0f9ff",
+      surface_color: "#ffffff",
+      text_color: "#1e3a8a",
+      primary_action_color: "#3b82f6",
+      secondary_action_color: "#d4af37",
+      font_family: "system-ui, -apple-system, sans-serif",
+      font_size: 16,
+      nama_sekolah: "SMP 59 KOTA BEKASI",
+      alamat_sekolah: "Jl. Pangkalan 2 RT. 003 RW. 008 Bantargebang Kec. Bantargebang Kota Bekasi",
+      tahun_ajaran: "Tahun Ajaran 2025/2026",
+      judul_halaman: "�� Rekap Nilai Rapor - Lima Semester",
+      tombol_tambah: "➕ Tambah Data Siswa"
+    };
 
+    const mataPelajaran = [
+      { id: 'pai', name: 'Pendidikan Agama Islam' },
+      { id: 'ppkn', name: 'PPKn' },
+      { id: 'bind', name: 'Bahasa Indonesia' },
+      { id: 'mtk', name: 'Matematika' },
+      { id: 'ipa', name: 'IPA' },
+      { id: 'ips', name: 'IPS' },
+      { id: 'bing', name: 'Bahasa Inggris' },
+      { id: 'senbud', name: 'Seni Budaya & Prakarya' },
+      { id: 'pjok', name: 'PJOK' },
+      { id: 'prakarya', name: 'Informatika' },
+      { id: 'mulok', name: 'Bahasa Sunda' }
+    ];
+
+    let students = [];
+    let editingStudent = null;
+    let selectedFile = null;
+    let currentUser = null;
+
+    // Admin credentials
+    const adminUser = {
+      username: 'admin',
+      password: 'Usep(77)',
+      role: 'admin',
+      name: 'Administrator'
+    };
+
+    function showToast(message, type = 'success') {
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    function handleLogin(username, password) {
+      // Check if admin login
+      if (username === adminUser.username && password === adminUser.password) {
+        currentUser = { username: adminUser.username, role: adminUser.role, name: adminUser.name };
+        
+        document.getElementById('login-section').classList.add('hidden');
+        document.getElementById('main-app').classList.remove('hidden');
+        document.getElementById('logged-user-name').textContent = adminUser.name;
+        
+        switchToAdminView();
+        document.getElementById('btn-menu-admin').classList.remove('hidden');
+        
+        showToast(`Selamat datang, ${adminUser.name}!`, 'success');
+        return true;
+      }
+      
+      // Check if student login (NIS as both username and password)
+      const student = students.find(s => s.nis === username && s.nis === password);
+      
+      if (student) {
+        currentUser = { username: student.nis, role: 'student', name: student.nama_siswa, studentData: student };
+        
+        document.getElementById('login-section').classList.add('hidden');
+        document.getElementById('main-app').classList.remove('hidden');
+        document.getElementById('logged-user-name').textContent = student.nama_siswa;
+        
+        switchToStudentView();
+        document.getElementById('btn-menu-admin').classList.add('hidden');
+        document.getElementById('btn-menu-student').classList.add('hidden');
+        
+        // Hide search form for students - they can only see their own data
+        document.querySelector('#student-section .card').classList.add('hidden');
+        
+        // Auto-populate student view with logged-in student data
+        displayLoggedInStudentData(student);
+        
+        showToast(`Selamat datang, ${student.nama_siswa}!`, 'success');
+        return true;
+      }
+      
+      showToast('Username atau password salah!', 'error');
+      return false;
+    }
+
+    function displayLoggedInStudentData(student) {
+      const resultContainer = document.getElementById('student-result');
+      const emptyState = document.getElementById('student-empty-state');
+      
+      emptyState.classList.add('hidden');
+      resultContainer.classList.remove('hidden');
+      resultContainer.innerHTML = '';
+      
+      const card = renderStudentCardReadOnly(student);
+      resultContainer.appendChild(card);
+    }
+
+    function handleLogout() {
+      currentUser = null;
+      document.getElementById('login-section').classList.remove('hidden');
+      document.getElementById('main-app').classList.add('hidden');
+      document.getElementById('username').value = '';
+      document.getElementById('password').value = '';
+      document.getElementById('search-nama').value = '';
+      document.getElementById('search-nis').value = '';
+      document.getElementById('student-result').classList.add('hidden');
+      document.getElementById('student-empty-state').classList.remove('hidden');
+      
+      // Restore visibility for next login
+      document.getElementById('btn-menu-admin').classList.remove('hidden');
+      document.getElementById('btn-menu-student').classList.remove('hidden');
+      const searchCard = document.querySelector('#student-section .card');
+      if (searchCard) searchCard.classList.remove('hidden');
+      
+      showToast('Anda telah logout', 'success');
+    }
+
+    function generateSemesterInputs() {
+      const container = document.getElementById('semester-sections');
+      container.innerHTML = '';
+
+      for (let sem = 1; sem <= 5; sem++) {
+        const semesterDiv = document.createElement('div');
+        semesterDiv.className = 'mb-8 p-6 bg-blue-50 rounded-lg';
+        semesterDiv.innerHTML = `
+          <h4 class="text-xl font-bold text-blue-900 mb-4 flex items-center gap-2">
+            <span class="badge-semester">Semester ${sem}</span>
+          </h4>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            ${mataPelajaran.map(mapel => `
+              <div>
+                <label for="semester-${sem}-${mapel.id}" class="block text-blue-900 font-medium mb-1 text-sm">${mapel.name}</label>
+                <input 
+                  type="number" 
+                  id="semester-${sem}-${mapel.id}" 
+                  class="input-field w-full" 
+                  placeholder="0-100" 
+                  min="0" 
+                  max="100">
+              </div>
+            `).join('')}
+          </div>
+        `;
+        container.appendChild(semesterDiv);
+      }
+    }
+
+    function showForm() {
+      document.getElementById('form-section').classList.remove('hidden');
+      document.getElementById('student-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (!document.getElementById('semester-sections').children.length) {
+        generateSemesterInputs();
+      }
+    }
+
+    function hideForm() {
+      document.getElementById('form-section').classList.add('hidden');
+      document.getElementById('student-form').reset();
+      editingStudent = null;
+    }
+
+    function renderStudentCard(student) {
+      const card = document.createElement('div');
+      card.className = 'card p-6';
+      card.dataset.studentId = student.id;
+
+      const calculateAverage = (semester) => {
+        const grades = mataPelajaran.map(mapel => 
+          student[`semester_${semester}_${mapel.id}`] || 0
+        );
+        const sum = grades.reduce((a, b) => a + b, 0);
+        return (sum / grades.length).toFixed(2);
+      };
+
+      const overallGrades = [];
+      for (let sem = 1; sem <= 5; sem++) {
+        mataPelajaran.forEach(mapel => {
+          overallGrades.push(student[`semester_${sem}_${mapel.id}`] || 0);
+        });
+      }
+      const overallAverage = (overallGrades.reduce((a, b) => a + b, 0) / overallGrades.length).toFixed(2);
+
+      card.innerHTML = `
+        <div class="flex justify-between items-start mb-4">
+          <div>
+            <h3 class="text-2xl font-bold text-blue-900">${student.nama_siswa}</h3>
+            <p class="text-gray-600">NIS: ${student.nis}</p>
+          </div>
+          <div class="flex gap-2">
+            <button class="btn-edit btn-primary text-white px-4 py-2 rounded-lg text-sm font-semibold">✏️ Edit</button>
+            <button class="btn-delete bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all">🗑��� Hapus</button>
+          </div>
+        </div>
+
+        <div class="mb-4 p-4 gold-gradient rounded-lg">
+          <p class="text-blue-900 font-bold text-lg">Rata-rata Keseluruhan: ${overallAverage}</p>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead>
+              <tr class="table-header">
+                <th class="px-4 py-3 text-left rounded-tl-lg">Mata Pelajaran</th>
+                ${[1, 2, 3, 4, 5].map(sem => `
+                  <th class="px-4 py-3 text-center ${sem === 5 ? 'rounded-tr-lg' : ''}">Sem ${sem}</th>
+                `).join('')}
+              </tr>
+            </thead>
+            <tbody>
+              ${mataPelajaran.map((mapel, idx) => `
+                <tr class="table-row border-b">
+                  <td class="px-4 py-3 font-semibold text-blue-900">${mapel.name}</td>
+                  ${[1, 2, 3, 4, 5].map(sem => {
+                    const nilai = student[`semester_${sem}_${mapel.id}`] || 0;
+                    const colorClass = nilai >= 80 ? 'text-green-600 font-bold' : nilai >= 70 ? 'text-blue-600' : 'text-red-600 font-bold';
+                    return `<td class="px-4 py-3 text-center ${colorClass}">${nilai}</td>`;
+                  }).join('')}
+                </tr>
+              `).join('')}
+              <tr class="bg-blue-100 font-bold">
+                <td class="px-4 py-3 text-blue-900">Rata-rata</td>
+                ${[1, 2, 3, 4, 5].map(sem => `
+                  <td class="px-4 py-3 text-center text-blue-900">${calculateAverage(sem)}</td>
+                `).join('')}
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      `;
+
+      card.querySelector('.btn-edit').addEventListener('click', () => editStudent(student));
+      card.querySelector('.btn-delete').addEventListener('click', () => deleteStudent(student));
+
+      return card;
+    }
+
+    function renderStudentList() {
+      const container = document.getElementById('student-list');
+      const emptyState = document.getElementById('empty-state');
+
+      container.innerHTML = '';
+
+      if (students.length === 0) {
+        emptyState.classList.remove('hidden');
+      } else {
+        emptyState.classList.add('hidden');
+        students.forEach(student => {
+          container.appendChild(renderStudentCard(student));
+        });
+      }
+    }
+
+    function editStudent(student) {
+      editingStudent = student;
+      showForm();
+
+      document.getElementById('nama-siswa').value = student.nama_siswa;
+      document.getElementById('nis').value = student.nis;
+
+      for (let sem = 1; sem <= 5; sem++) {
+        mataPelajaran.forEach(mapel => {
+          const input = document.getElementById(`semester-${sem}-${mapel.id}`);
+          if (input) {
+            input.value = student[`semester_${sem}_${mapel.id}`] || '';
+          }
+        });
+      }
+
+      document.getElementById('submit-text').textContent = '💾 Update Data';
+    }
+
+    async function deleteStudent(student) {
+      const deleteBtn = event.target.closest('.btn-delete');
+      const originalText = deleteBtn.innerHTML;
+      
+      if (deleteBtn.dataset.confirmDelete === 'true') {
+        deleteBtn.disabled = true;
+        deleteBtn.innerHTML = '<span class="spinner"></span>';
+
+        const result = await window.dataSdk.delete(student);
+        
+        if (result.isOk) {
+          showToast('Data siswa berhasil dihapus!', 'success');
+        } else {
+          showToast('Gagal menghapus data: ' + result.error.message, 'error');
+          deleteBtn.disabled = false;
+          deleteBtn.innerHTML = originalText;
+        }
+        delete deleteBtn.dataset.confirmDelete;
+      } else {
+        deleteBtn.dataset.confirmDelete = 'true';
+        deleteBtn.innerHTML = '����� Konfirmasi Hapus';
+        deleteBtn.classList.remove('bg-red-500', 'hover:bg-red-600');
+        deleteBtn.classList.add('bg-red-700');
+        
+        setTimeout(() => {
+          if (deleteBtn.dataset.confirmDelete === 'true') {
+            delete deleteBtn.dataset.confirmDelete;
+            deleteBtn.innerHTML = originalText;
+            deleteBtn.classList.add('bg-red-500', 'hover:bg-red-600');
+            deleteBtn.classList.remove('bg-red-700');
+          }
+        }, 3000);
+      }
+    }
+
+    function showImportSection() {
+      document.getElementById('import-section').classList.remove('hidden');
+      document.getElementById('import-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function hideImportSection() {
+      document.getElementById('import-section').classList.add('hidden');
+      document.getElementById('file-input').value = '';
+      document.getElementById('file-name').textContent = 'Belum ada file dipilih';
+      document.getElementById('btn-process-import').disabled = true;
+      selectedFile = null;
+    }
+
+    function generateCSVTemplate() {
+      let csv = 'Nama Siswa,NIS';
+      
+      for (let sem = 1; sem <= 5; sem++) {
+        mataPelajaran.forEach(mapel => {
+          csv += `,Semester${sem}_${mapel.name.replace(/\s/g, '')}`;
+        });
+      }
+      
+      csv += '\nContoh Siswa,12345';
+      for (let sem = 1; sem <= 5; sem++) {
+        mataPelajaran.forEach(() => {
+          csv += ',85';
+        });
+      }
+      
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      document.getElementById('btn-download-template').href = url;
+    }
+
+    function parseCSV(text) {
+      const lines = text.split('\n').filter(line => line.trim());
+      if (lines.length < 2) return [];
+      
+      const headers = lines[0].split(',').map(h => h.trim());
+      const data = [];
+      
+      for (let i = 1; i < lines.length; i++) {
+        const values = lines[i].split(',').map(v => v.trim());
+        const row = {};
+        headers.forEach((header, index) => {
+          row[header] = values[index];
+        });
+        data.push(row);
+      }
+      
+      return data;
+    }
+
+    function mapImportDataToStudent(row) {
+      const student = {
+        id: 'student_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+        nama_siswa: row['Nama Siswa'] || row['nama_siswa'] || '',
+        nis: row['NIS'] || row['nis'] || '',
+        created_at: new Date().toISOString()
+      };
+
+      const mapelMapping = {
+        'PAI': 'pai',
+        'PendidikanAgamaIslam': 'pai',
+        'PPKn': 'ppkn',
+        'BahasaIndonesia': 'bind',
+        'Matematika': 'mtk',
+        'IPA': 'ipa',
+        'IPS': 'ips',
+        'BahasaInggris': 'bing',
+        'SeniBudaya': 'senbud',
+        'PJOK': 'pjok',
+        'Prakarya': 'prakarya',
+        'MuatanLokal': 'mulok'
+      };
+
+      for (let sem = 1; sem <= 5; sem++) {
+        Object.entries(mapelMapping).forEach(([key, value]) => {
+          const possibleKeys = [
+            `Semester${sem}_${key}`,
+            `semester${sem}_${key}`,
+            `Semester ${sem} ${key}`,
+            `sem${sem}_${value}`
+          ];
+          
+          let nilaiFound = false;
+          for (const possibleKey of possibleKeys) {
+            if (row[possibleKey] !== undefined) {
+              student[`semester_${sem}_${value}`] = parseInt(row[possibleKey]) || 0;
+              nilaiFound = true;
+              break;
+            }
+          }
+          
+          if (!nilaiFound) {
+            student[`semester_${sem}_${value}`] = 0;
+          }
+        });
+      }
+
+      return student;
+    }
+
+    async function processImport() {
+      if (!selectedFile) {
+        showToast('Silakan pilih file terlebih dahulu', 'error');
+        return;
+      }
+
+      const importBtn = document.getElementById('btn-process-import');
+      const spinner = document.getElementById('import-spinner');
+      
+      importBtn.disabled = true;
+      spinner.classList.remove('hidden');
+
+      try {
+        const text = await selectedFile.text();
+        const rows = parseCSV(text);
+        
+        if (rows.length === 0) {
+          showToast('File CSV kosong atau format tidak valid', 'error');
+          importBtn.disabled = false;
+          spinner.classList.add('hidden');
+          return;
+        }
+
+        // Calculate how many NEW students will be added (not updates)
+        const newStudentsCount = rows.filter(row => {
+          const nis = row['NIS'] || row['nis'];
+          return nis && !students.find(s => s.nis === nis);
+        }).length;
+
+        const availableSlots = 999 - students.length;
+        if (newStudentsCount > availableSlots) {
+          showToast(`Hanya bisa import ${availableSlots} data baru. Maksimum 999 data tercapai.`, 'error');
+          importBtn.disabled = false;
+          spinner.classList.add('hidden');
+          return;
+        }
+
+        let successCount = 0;
+        let updateCount = 0;
+        let errorCount = 0;
+
+        for (const row of rows) {
+          try {
+            const studentData = mapImportDataToStudent(row);
+            
+            if (!studentData.nama_siswa || !studentData.nis) {
+              errorCount++;
+              continue;
+            }
+
+            // Check if student with same NIS already exists
+            const existingStudent = students.find(s => s.nis === studentData.nis);
+
+            if (existingStudent) {
+              // Update existing student
+              const updatedData = {
+                ...existingStudent,
+                ...studentData,
+                __backendId: existingStudent.__backendId // Preserve backend ID
+              };
+              const result = await window.dataSdk.update(updatedData);
+              if (result.isOk) {
+                updateCount++;
+              } else {
+                errorCount++;
+              }
+            } else {
+              // Create new student
+              const result = await window.dataSdk.create(studentData);
+              if (result.isOk) {
+                successCount++;
+              } else {
+                errorCount++;
+              }
+            }
+          } catch (err) {
+            errorCount++;
+          }
+        }
+
+        let message = '';
+        if (successCount > 0) {
+          message += `${successCount} data baru ditambahkan`;
+        }
+        if (updateCount > 0) {
+          message += (message ? ', ' : '') + `${updateCount} data diupdate`;
+        }
+        if (message) {
+          showToast(message, 'success');
+        }
+        if (errorCount > 0) {
+          showToast(`${errorCount} data gagal diimport`, 'error');
+        }
+
+        hideImportSection();
+      } catch (error) {
+        showToast('Gagal memproses file: ' + error.message, 'error');
+      } finally {
+        importBtn.disabled = false;
+        spinner.classList.add('hidden');
+      }
+    }
+
+    document.getElementById('btn-import-data').addEventListener('click', showImportSection);
+    
+    document.getElementById('btn-cancel-import').addEventListener('click', hideImportSection);
+
+    document.getElementById('file-input').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        selectedFile = file;
+        document.getElementById('file-name').textContent = file.name;
+        document.getElementById('btn-process-import').disabled = false;
+      } else {
+        selectedFile = null;
+        document.getElementById('file-name').textContent = 'Belum ada file dipilih';
+        document.getElementById('btn-process-import').disabled = true;
+      }
+    });
+
+    document.getElementById('btn-process-import').addEventListener('click', processImport);
+
+    function switchToAdminView() {
+      document.getElementById('admin-section').classList.remove('hidden');
+      document.getElementById('student-section').classList.add('hidden');
+      document.getElementById('btn-menu-admin').classList.add('active');
+      document.getElementById('btn-menu-student').classList.remove('active');
+    }
+
+    function switchToStudentView() {
+      document.getElementById('admin-section').classList.add('hidden');
+      document.getElementById('student-section').classList.remove('hidden');
+      document.getElementById('btn-menu-admin').classList.remove('active');
+      document.getElementById('btn-menu-student').classList.add('active');
+      document.getElementById('student-result').classList.add('hidden');
+      document.getElementById('student-empty-state').classList.remove('hidden');
+    }
+
+    function searchStudent() {
+      const searchNama = document.getElementById('search-nama').value.toLowerCase().trim();
+      const searchNis = document.getElementById('search-nis').value.toLowerCase().trim();
+
+      if (!searchNama && !searchNis) {
+        showToast('Masukkan nama atau NIS siswa', 'error');
+        return;
+      }
+
+      const foundStudents = students.filter(student => {
+        const matchNama = searchNama ? student.nama_siswa.toLowerCase().includes(searchNama) : true;
+        const matchNis = searchNis ? student.nis.toLowerCase().includes(searchNis) : true;
+        return matchNama && matchNis;
+      });
+
+      const resultContainer = document.getElementById('student-result');
+      const emptyState = document.getElementById('student-empty-state');
+
+      if (foundStudents.length === 0) {
+        resultContainer.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+        emptyState.innerHTML = `
+          <div class="text-6xl mb-4">��</div>
+          <h3 class="text-2xl font-bold text-blue-900 mb-2">Data Tidak Ditemukan</h3>
+          <p class="text-gray-600 mb-6">Siswa dengan nama atau NIS tersebut tidak ditemukan dalam database</p>
+        `;
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      resultContainer.classList.remove('hidden');
+      resultContainer.innerHTML = '';
+
+      foundStudents.forEach(student => {
+        const card = renderStudentCardReadOnly(student);
+        resultContainer.appendChild(card);
+      });
+
+      showToast(`Ditemukan ${foundStudents.length} siswa`, 'success');
+    }
+
+    function renderStudentCardReadOnly(student) {
+      const card = document.createElement('div');
+      card.className = 'card p-6 mb-6';
+
+      const calculateAverage = (semester) => {
+        const grades = mataPelajaran.map(mapel => 
+          student[`semester_${semester}_${mapel.id}`] || 0
+        );
+        const sum = grades.reduce((a, b) => a + b, 0);
+        return (sum / grades.length).toFixed(2);
+      };
+
+      const overallGrades = [];
+      for (let sem = 1; sem <= 5; sem++) {
+        mataPelajaran.forEach(mapel => {
+          overallGrades.push(student[`semester_${sem}_${mapel.id}`] || 0);
+        });
+      }
+      const overallAverage = (overallGrades.reduce((a, b) => a + b, 0) / overallGrades.length).toFixed(2);
+
+      card.innerHTML = `
+        <div class="mb-6">
+          <h3 class="text-3xl font-bold text-blue-900">${student.nama_siswa}</h3>
+          <p class="text-gray-600 text-lg">NIS: ${student.nis}</p>
+        </div>
+
+        <div class="mb-6 p-6 gold-gradient rounded-lg">
+          <p class="text-blue-900 font-bold text-2xl text-center">Rata-rata Keseluruhan: ${overallAverage}</p>
+        </div>
+
+        <!-- Grafik Perkembangan Nilai -->
+        <div class="mb-6 p-6 bg-white rounded-lg border-2 border-blue-200">
+          <h4 class="text-xl font-bold text-blue-900 mb-4">📈 Grafik Perkembangan Rata-rata per Semester</h4>
+          <canvas id="chart-readonly-${student.id}" class="w-full" style="max-height: 400px;"></canvas>
+          
+          <!-- Rata-rata per Semester -->
+          <div class="mt-6 grid grid-cols-5 gap-3">
+            ${[1, 2, 3, 4, 5].map(sem => `
+              <div class="text-center p-4 bg-blue-50 rounded-lg border-2 border-blue-200">
+                <p class="text-blue-900 font-bold text-sm mb-1">Semester ${sem}</p>
+                <p class="text-2xl font-bold text-blue-600">${calculateAverage(sem)}</p>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- Grafik Per Mata Pelajaran -->
+        <div class="mb-6 p-6 bg-white rounded-lg border-2 border-blue-200">
+          <h4 class="text-xl font-bold text-blue-900 mb-4">����� Grafik Nilai per Mata Pelajaran</h4>
+          <canvas id="chart-subjects-readonly-${student.id}" class="w-full" style="max-height: 500px;"></canvas>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead>
+              <tr class="table-header">
+                <th class="px-4 py-3 text-left rounded-tl-lg">Mata Pelajaran</th>
+                ${[1, 2, 3, 4, 5].map(sem => `
+                  <th class="px-4 py-3 text-center ${sem === 5 ? 'rounded-tr-lg' : ''}">Sem ${sem}</th>
+                `).join('')}
+              </tr>
+            </thead>
+            <tbody>
+              ${mataPelajaran.map((mapel) => `
+                <tr class="table-row border-b">
+                  <td class="px-4 py-3 font-semibold text-blue-900">${mapel.name}</td>
+                  ${[1, 2, 3, 4, 5].map(sem => {
+                    const nilai = student[`semester_${sem}_${mapel.id}`] || 0;
+                    const colorClass = nilai >= 80 ? 'text-green-600 font-bold' : nilai >= 70 ? 'text-blue-600' : 'text-red-600 font-bold';
+                    return `<td class="px-4 py-3 text-center ${colorClass}">${nilai}</td>`;
+                  }).join('')}
+                </tr>
+              `).join('')}
+              <tr class="bg-blue-100 font-bold">
+                <td class="px-4 py-3 text-blue-900">Rata-rata</td>
+                ${[1, 2, 3, 4, 5].map(sem => `
+                  <td class="px-4 py-3 text-center text-blue-900">${calculateAverage(sem)}</td>
+                `).join('')}
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      `;
+
+      // Create chart after DOM is ready
+      setTimeout(() => {
+        createStudentChartReadOnly(student);
+        createSubjectsChartReadOnly(student);
+      }, 100);
+
+      return card;
+    }
+
+    function createSubjectsChartReadOnly(student) {
+      const canvas = document.getElementById(`chart-subjects-readonly-${student.id}`);
+      if (!canvas) return;
+
+      const ctx = canvas.getContext('2d');
+      
+      // Prepare datasets for each subject
+      const datasets = mataPelajaran.map((mapel, index) => {
+        const data = [];
+        for (let sem = 1; sem <= 5; sem++) {
+          data.push(student[`semester_${sem}_${mapel.id}`] || 0);
+        }
+        
+        // Color palette
+        const colors = [
+          '#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6',
+          '#ec4899', '#06b6d4', '#84cc16', '#f97316', '#6366f1', '#14b8a6'
+        ];
+        
+        return {
+          label: mapel.name,
+          data: data,
+          borderColor: colors[index % colors.length],
+          backgroundColor: colors[index % colors.length] + '20',
+          borderWidth: 2,
+          tension: 0.4,
+          pointRadius: 4,
+          pointBackgroundColor: colors[index % colors.length],
+          pointBorderColor: '#ffffff',
+          pointBorderWidth: 2,
+          pointHoverRadius: 6
+        };
+      });
+
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ['Semester 1', 'Semester 2', 'Semester 3', 'Semester 4', 'Semester 5'],
+          datasets: datasets
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top',
+              labels: {
+                font: {
+                  size: 11,
+                  weight: 'bold'
+                },
+                color: '#1e3a8a',
+                padding: 10,
+                boxWidth: 15,
+                boxHeight: 15
+              }
+            },
+            tooltip: {
+              backgroundColor: '#1e3a8a',
+              titleColor: '#ffffff',
+              bodyColor: '#ffffff',
+              borderColor: '#d4af37',
+              borderWidth: 2,
+              padding: 12,
+              displayColors: true,
+              callbacks: {
+                label: function(context) {
+                  return context.dataset.label + ': ' + context.parsed.y;
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 100,
+              ticks: {
+                stepSize: 10,
+                color: '#1e3a8a',
+                font: {
+                  size: 11,
+                  weight: 'bold'
+                }
+              },
+              grid: {
+                color: 'rgba(30, 58, 138, 0.1)'
+              }
+            },
+            x: {
+              ticks: {
+                color: '#1e3a8a',
+                font: {
+                  size: 11,
+                  weight: 'bold'
+                }
+              },
+              grid: {
+                display: false
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function createStudentChartReadOnly(student) {
+      const canvas = document.getElementById(`chart-readonly-${student.id}`);
+      if (!canvas) return;
+
+      const ctx = canvas.getContext('2d');
+      
+      // Calculate average per semester
+      const semesterAverages = [];
+      for (let sem = 1; sem <= 5; sem++) {
+        const grades = mataPelajaran.map(mapel => 
+          student[`semester_${sem}_${mapel.id}`] || 0
+        );
+        const avg = (grades.reduce((a, b) => a + b, 0) / grades.length).toFixed(2);
+        semesterAverages.push(parseFloat(avg));
+      }
+
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ['Semester 1', 'Semester 2', 'Semester 3', 'Semester 4', 'Semester 5'],
+          datasets: [{
+            label: 'Rata-rata Nilai',
+            data: semesterAverages,
+            borderColor: '#3b82f6',
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.4,
+            pointRadius: 6,
+            pointBackgroundColor: '#3b82f6',
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 2,
+            pointHoverRadius: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top',
+              labels: {
+                font: {
+                  size: 14,
+                  weight: 'bold'
+                },
+                color: '#1e3a8a'
+              }
+            },
+            tooltip: {
+              backgroundColor: '#1e3a8a',
+              titleColor: '#ffffff',
+              bodyColor: '#ffffff',
+              borderColor: '#d4af37',
+              borderWidth: 2,
+              padding: 12,
+              displayColors: false,
+              callbacks: {
+                label: function(context) {
+                  return 'Rata-rata: ' + context.parsed.y.toFixed(2);
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 100,
+              ticks: {
+                stepSize: 10,
+                color: '#1e3a8a',
+                font: {
+                  size: 12,
+                  weight: 'bold'
+                }
+              },
+              grid: {
+                color: 'rgba(30, 58, 138, 0.1)'
+              }
+            },
+            x: {
+              ticks: {
+                color: '#1e3a8a',
+                font: {
+                  size: 12,
+                  weight: 'bold'
+                }
+              },
+              grid: {
+                display: false
+              }
+            }
+          }
+        }
+      });
+    }
+
+    document.getElementById('login-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      handleLogin(username, password);
+    });
+
+    document.getElementById('btn-logout').addEventListener('click', handleLogout);
+
+    document.getElementById('btn-menu-admin').addEventListener('click', () => {
+      if (currentUser && currentUser.role === 'admin') {
+        switchToAdminView();
+      }
+    });
+    
+    document.getElementById('btn-menu-student').addEventListener('click', () => {
+      if (currentUser && currentUser.role === 'student') {
+        switchToStudentView();
+        // Auto-show student's own data
+        displayLoggedInStudentData(currentUser.studentData);
+      } else {
+        switchToStudentView();
+      }
+    });
+    document.getElementById('btn-search-student').addEventListener('click', searchStudent);
+
+    document.getElementById('search-nama').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') searchStudent();
+    });
+
+    document.getElementById('search-nis').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') searchStudent();
+    });
+
+    document.getElementById('btn-add-student').addEventListener('click', () => {
+      if (students.length >= 999) {
+        showToast('Maksimum 999 data siswa telah tercapai. Silakan hapus beberapa data terlebih dahulu.', 'error');
+        return;
+      }
+      editingStudent = null;
+      document.getElementById('submit-text').textContent = '💾 Simpan Data';
+      showForm();
+    });
+
+    document.getElementById('btn-cancel').addEventListener('click', hideForm);
+
+    document.getElementById('student-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      if (!editingStudent && students.length >= 999) {
+        showToast('Maksimum 999 data siswa telah tercapai.', 'error');
+        return;
+      }
+
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      const spinner = document.getElementById('submit-spinner');
+      const submitText = document.getElementById('submit-text');
+      
+      submitBtn.disabled = true;
+      spinner.classList.remove('hidden');
+
+      const studentData = {
+        nama_siswa: document.getElementById('nama-siswa').value,
+        nis: document.getElementById('nis').value,
+        created_at: new Date().toISOString()
+      };
+
+      for (let sem = 1; sem <= 5; sem++) {
+        mataPelajaran.forEach(mapel => {
+          const input = document.getElementById(`semester-${sem}-${mapel.id}`);
+          studentData[`semester_${sem}_${mapel.id}`] = parseInt(input.value) || 0;
+        });
+      }
+
+      let result;
+      if (editingStudent) {
+        result = await window.dataSdk.update({ ...editingStudent, ...studentData });
+      } else {
+        studentData.id = 'student_' + Date.now();
+        result = await window.dataSdk.create(studentData);
+      }
+
+      submitBtn.disabled = false;
+      spinner.classList.add('hidden');
+
+      if (result.isOk) {
+        showToast(editingStudent ? 'Data siswa berhasil diupdate!' : 'Data siswa berhasil disimpan!', 'success');
+        hideForm();
+      } else {
+        showToast('Gagal menyimpan data: ' + result.error.message, 'error');
+      }
+    });
+
+    const dataHandler = {
+      onDataChanged(data) {
+        students = data;
+        renderStudentList();
+      }
+    };
+
+    async function onConfigChange(config) {
+      const baseFont = config.font_family || defaultConfig.font_family;
+      const fontSize = config.font_size || defaultConfig.font_size;
+      const fontStack = `${baseFont}, system-ui, -apple-system, sans-serif`;
+
+      document.body.style.fontFamily = fontStack;
+      document.body.style.fontSize = `${fontSize}px`;
+
+      const schoolName = document.getElementById('school-name');
+      const schoolAddress = document.getElementById('school-address');
+      const academicYear = document.getElementById('academic-year');
+      const pageTitle = document.getElementById('page-title');
+      const btnAddStudent = document.getElementById('btn-add-student');
+
+      if (schoolName) {
+        schoolName.textContent = config.nama_sekolah || defaultConfig.nama_sekolah;
+        schoolName.style.fontSize = `${fontSize * 2}px`;
+      }
+      if (schoolAddress) {
+        schoolAddress.textContent = config.alamat_sekolah || defaultConfig.alamat_sekolah;
+        schoolAddress.style.fontSize = `${fontSize * 1.125}px`;
+      }
+      if (academicYear) {
+        academicYear.textContent = config.tahun_ajaran || defaultConfig.tahun_ajaran;
+        academicYear.style.fontSize = `${fontSize}px`;
+      }
+      if (pageTitle) {
+        pageTitle.textContent = config.judul_halaman || defaultConfig.judul_halaman;
+        pageTitle.style.fontSize = `${fontSize * 1.875}px`;
+      }
+      if (btnAddStudent) {
+        btnAddStudent.textContent = config.tombol_tambah || defaultConfig.tombol_tambah;
+      }
+    }
+
+    (async () => {
+      generateCSVTemplate();
+      
+      if (window.elementSdk) {
+        await window.elementSdk.init({
+          defaultConfig,
+          onConfigChange,
+          mapToCapabilities: (config) => ({
+            recolorables: [
+              {
+                get: () => config.background_color || defaultConfig.background_color,
+                set: (value) => {
+                  config.background_color = value;
+                  window.elementSdk.setConfig({ background_color: value });
+                }
+              },
+              {
+                get: () => config.surface_color || defaultConfig.surface_color,
+                set: (value) => {
+                  config.surface_color = value;
+                  window.elementSdk.setConfig({ surface_color: value });
+                }
+              },
+              {
+                get: () => config.text_color || defaultConfig.text_color,
+                set: (value) => {
+                  config.text_color = value;
+                  window.elementSdk.setConfig({ text_color: value });
+                }
+              },
+              {
+                get: () => config.primary_action_color || defaultConfig.primary_action_color,
+                set: (value) => {
+                  config.primary_action_color = value;
+                  window.elementSdk.setConfig({ primary_action_color: value });
+                }
+              },
+              {
+                get: () => config.secondary_action_color || defaultConfig.secondary_action_color,
+                set: (value) => {
+                  config.secondary_action_color = value;
+                  window.elementSdk.setConfig({ secondary_action_color: value });
+                }
+              }
+            ],
+            borderables: [],
+            fontEditable: {
+              get: () => config.font_family || defaultConfig.font_family,
+              set: (value) => {
+                config.font_family = value;
+                window.elementSdk.setConfig({ font_family: value });
+              }
+            },
+            fontSizeable: {
+              get: () => config.font_size || defaultConfig.font_size,
+              set: (value) => {
+                config.font_size = value;
+                window.elementSdk.setConfig({ font_size: value });
+              }
+            }
+          }),
+          mapToEditPanelValues: (config) => new Map([
+            ['nama_sekolah', config.nama_sekolah || defaultConfig.nama_sekolah],
+            ['alamat_sekolah', config.alamat_sekolah || defaultConfig.alamat_sekolah],
+            ['tahun_ajaran', config.tahun_ajaran || defaultConfig.tahun_ajaran],
+            ['judul_halaman', config.judul_halaman || defaultConfig.judul_halaman],
+            ['tombol_tambah', config.tombol_tambah || defaultConfig.tombol_tambah]
+          ])
+        });
+      }
+
+      if (window.dataSdk) {
+        const initResult = await window.dataSdk.init(dataHandler);
+        if (!initResult.isOk) {
+          showToast('Gagal menginisialisasi database: ' + initResult.error.message, 'error');
+        }
+      }
+    })();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9ac9702da308f46d',t:'MTc2NTUwMjgzNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
