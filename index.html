@@ -8,6 +8,7 @@
   <script src="/_sdk/element_sdk.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
     body {
       box-sizing: border-box;
@@ -220,7 +221,7 @@
         <p class="text-yellow-700 text-sm">Kolom yang diperlukan: Nama Siswa, NIS, lalu untuk setiap mata pelajaran gunakan format: <strong>Semester1_NamaMapel</strong>, <strong>Semester2_NamaMapel</strong>, dst.</p>
         <p class="text-yellow-700 text-sm mt-2">Contoh: Semester1_PAI, Semester1_PPKn, Semester2_PAI, Semester2_PPKn, dst.</p>
        </div>
-       <div class="flex gap-4"><button id="btn-process-import" class="btn-primary text-white font-semibold px-8 py-3 rounded-lg shadow-lg flex items-center gap-2" disabled> <span id="import-spinner" class="spinner hidden"></span> <span>📥 Proses Import</span> </button> <button id="btn-cancel-import" class="btn-secondary font-semibold px-8 py-3 rounded-lg shadow-lg"> ❌ Batal </button> <a id="btn-download-template" href="#" download="template_import_rapor.csv" class="btn-secondary font-semibold px-8 py-3 rounded-lg shadow-lg inline-flex items-center"> ⬇️ Download Template CSV </a>
+       <div class="flex gap-4 flex-wrap"><button id="btn-process-import" class="btn-primary text-white font-semibold px-8 py-3 rounded-lg shadow-lg flex items-center gap-2" disabled> <span id="import-spinner" class="spinner hidden"></span> <span>📥 Proses Import</span> </button> <button id="btn-cancel-import" class="btn-secondary font-semibold px-8 py-3 rounded-lg shadow-lg"> ❌ Batal </button> <a id="btn-download-template" href="#" download="template_import_rapor.csv" class="btn-secondary font-semibold px-8 py-3 rounded-lg shadow-lg inline-flex items-center"> ⬇️ Download Template CSV </a> <button id="btn-download-excel" class="btn-secondary font-semibold px-8 py-3 rounded-lg shadow-lg"> 📊 Download Template Excel </button>
        </div>
       </div><!-- Form Section (Hidden by default) -->
       <div id="form-section" class="card p-8 mb-8 hidden">
@@ -620,6 +621,43 @@
       document.getElementById('btn-download-template').href = url;
     }
 
+    function generateExcelTemplate() {
+      const wb = XLSX.utils.book_new();
+      
+      // Prepare headers
+      const headers = ['Nama Siswa', 'NIS'];
+      for (let sem = 1; sem <= 5; sem++) {
+        mataPelajaran.forEach(mapel => {
+          headers.push(`Semester${sem}_${mapel.name.replace(/\s/g, '')}`);
+        });
+      }
+      
+      // Prepare example data
+      const exampleRow = ['Contoh Siswa', '12345'];
+      for (let sem = 1; sem <= 5; sem++) {
+        mataPelajaran.forEach(() => {
+          exampleRow.push(85);
+        });
+      }
+      
+      // Create worksheet
+      const wsData = [headers, exampleRow];
+      const ws = XLSX.utils.aoa_to_sheet(wsData);
+      
+      // Set column widths
+      const colWidths = [{ wch: 20 }, { wch: 12 }];
+      for (let i = 0; i < mataPelajaran.length * 5; i++) {
+        colWidths.push({ wch: 10 });
+      }
+      ws['!cols'] = colWidths;
+      
+      // Add worksheet to workbook
+      XLSX.utils.book_append_sheet(wb, ws, 'Data Siswa');
+      
+      // Generate Excel file
+      XLSX.writeFile(wb, 'template_import_rapor.xlsx');
+    }
+
     function parseCSV(text) {
       const lines = text.split('\n').filter(line => line.trim());
       if (lines.length < 2) return [];
@@ -637,6 +675,42 @@
       }
       
       return data;
+    }
+
+    function parseExcel(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+            const rows = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+            
+            if (rows.length < 2) {
+              resolve([]);
+              return;
+            }
+            
+            const headers = rows[0];
+            const result = [];
+            
+            for (let i = 1; i < rows.length; i++) {
+              const row = {};
+              headers.forEach((header, index) => {
+                row[header] = rows[i][index];
+              });
+              result.push(row);
+            }
+            
+            resolve(result);
+          } catch (error) {
+            reject(error);
+          }
+        };
+        reader.onerror = () => reject(new Error('Gagal membaca file'));
+        reader.readAsArrayBuffer(file);
+      });
     }
 
     function mapImportDataToStudent(row) {
@@ -702,11 +776,23 @@
       spinner.classList.remove('hidden');
 
       try {
-        const text = await selectedFile.text();
-        const rows = parseCSV(text);
+        let rows;
+        const fileName = selectedFile.name.toLowerCase();
+        
+        if (fileName.endsWith('.csv')) {
+          const text = await selectedFile.text();
+          rows = parseCSV(text);
+        } else if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
+          rows = await parseExcel(selectedFile);
+        } else {
+          showToast('Format file tidak didukung. Gunakan CSV atau Excel', 'error');
+          importBtn.disabled = false;
+          spinner.classList.add('hidden');
+          return;
+        }
         
         if (rows.length === 0) {
-          showToast('File CSV kosong atau format tidak valid', 'error');
+          showToast('File kosong atau format tidak valid', 'error');
           importBtn.disabled = false;
           spinner.classList.add('hidden');
           return;
@@ -810,6 +896,8 @@
     });
 
     document.getElementById('btn-process-import').addEventListener('click', processImport);
+    
+    document.getElementById('btn-download-excel').addEventListener('click', generateExcelTemplate);
 
     function switchToAdminView() {
       document.getElementById('admin-section').classList.remove('hidden');
@@ -1379,5 +1467,5 @@
       }
     })();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9ac9702da308f46d',t:'MTc2NTUwMjgzNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9ac98ac313d41333',t:'MTc2NTUwMzkyNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
